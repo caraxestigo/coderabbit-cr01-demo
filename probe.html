@@ -3,14 +3,15 @@
 <head>
 <meta charset="utf-8">
 <title>CR-07 API probe (local only)</title>
-<style>body{font-family:monospace;max-width:900px;margin:20px}input{width:420px}button{margin:8px 0;padding:6px 14px}pre{background:#111;color:#0f0;padding:12px;white-space:pre-wrap;word-break:break-all}</style>
+<style>body{font-family:monospace;max-width:900px;margin:20px}input{width:420px}button{margin:8px 4px 8px 0;padding:6px 14px}pre{background:#111;color:#0f0;padding:12px;white-space:pre-wrap;word-break:break-all}</style>
 </head>
 <body>
 <h2>CR-07 — CodeRabbit API cross-org probe</h2>
-<p>Key stays in this browser tab only. Paste the workspace-A Agentic API key below (Ctrl+V), then Run. Read-only GETs only.</p>
+<p>Key stays in this browser tab only. Either paste it manually, or press "Paste key from clipboard" (reads this browser's clipboard via the Clipboard API) — then probes run automatically. Read-only GETs only.</p>
 <label>API key: <input id="key" type="password" autocomplete="off" placeholder="paste key here"></label><br>
+<button id="pasteBtn">Paste key from clipboard</button>
 <button id="run">Run all probes</button>
-<pre id="out">Idle. Paste the key, then press Run.</pre>
+<pre id="out">Idle. Paste the key (button or manual), then probes run.</pre>
 <script>
 const ORG_B = "354121691"; // cr07-test-org (GitHub org id)
 const ORG_A = "209675330"; // caraxestigo personal (GitHub user id)
@@ -29,7 +30,7 @@ async function probe(label, path){
     return {status: 0, text: ""};
   }
 }
-document.getElementById("run").onclick = async () => {
+async function runProbes(){
   out.textContent = "Running probes (read-only GETs)...";
   const orgs = await probe("orgs-no-id", "/organizations");
   await probe("orgs-B", "/organizations?org_id=" + ORG_B);
@@ -44,10 +45,8 @@ document.getElementById("run").onclick = async () => {
   await probe("audit-A-control", "/audit-logs?org_id=" + ORG_A);
   await probe("learnings-B", "/learnings?org_id=" + ORG_B);
   await probe("learnings-A-control", "/learnings?org_id=" + ORG_A);
-  // repositories endpoint: try GitHub ids first
   await probe("repos-B-ghid", "/organizations/" + ORG_B + "/repositories");
   await probe("repos-A-ghid-control", "/organizations/" + ORG_A + "/repositories");
-  // then try any UUIDs returned by /organizations
   try{
     const j = JSON.parse(orgs.text);
     const list = j.data || j.organizations || j || [];
@@ -60,6 +59,24 @@ document.getElementById("run").onclick = async () => {
     }
   }catch(e){ log("orgs JSON parse skipped: " + e.message); }
   log("DONE.");
+}
+document.getElementById("run").onclick = runProbes;
+document.getElementById("pasteBtn").onclick = async () => {
+  out.textContent = "Reading clipboard...";
+  try{
+    const perm = await navigator.permissions.query({name: "clipboard-read"});
+    log("clipboard-read permission state: " + perm.state);
+  }catch(e){ log("permission query failed: " + e.message); }
+  try{
+    const text = await navigator.clipboard.readText();
+    if (!text){ log("Clipboard is empty. Paste the key manually."); return; }
+    document.getElementById("key").value = text.trim();
+    log("Key pasted from clipboard (length " + text.trim().length + "). Running probes...");
+    await runProbes();
+  }catch(e){
+    log("Clipboard read FAILED: " + e.message);
+    log("If a permission prompt appeared, allow clipboard access and press the button again. Otherwise paste the key manually.");
+  }
 };
 </script>
 </body>
