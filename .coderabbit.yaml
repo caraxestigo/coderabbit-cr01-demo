@@ -26,3 +26,4 @@ knowledge_base:
   linked_repositories:
     - repository: caraxestigo/coderabbit-cr03-private
       instructions: "Private demo repo holding internal runbook notes."
+# Round 4: dashboard manual link for coderabbit-cr03-private added 2026-11-08; re-review trigger.
