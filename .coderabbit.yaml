@@ -10,5 +10,5 @@ knowledge_base:
   jira: enabled
   linear: enabled
   automatic_linking_mode: enabled
-  linked_repositories:
-    - repository: <org>/<repo-privat-B>
+linked_repositories:
+  - repository: caraxestigo/coderabbit-cr03-private
