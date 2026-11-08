@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<!-- CR-02 demo payload: custom standard that ships the EnvSniff. -->
+<ruleset name="MyStandard">
+  <description>Demo custom standard for CR-02 (PHPCS code execution test).</description>
+  <rule ref="MyStandard.Security.Env"/>
+</ruleset>
