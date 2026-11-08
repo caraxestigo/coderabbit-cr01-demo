@@ -1,14 +1,26 @@
-# CR-03 demo — head-branch config (TEMPLATE, fill in at demo time)
-# PR dari fork ke repo publik A, config ini di head branch.
-# Ganti <org>/<repo-privat-B> dengan repo privat sendiri.
-# Jalankan `@coderabbitai configuration` di PR untuk melihat resolved config.
+# CR-03 demo — head-branch config (CORRECTED 2026-11-08, round 2)
+# Round 1 used string values; CodeRabbit's validator rejected all six with
+# "expected object, received string" and fell back to defaults, so round 1
+# tested nothing. Per docs.coderabbit.ai/reference/configuration (2026-11-02)
+# and the PR #4 review hint ("Put enabled under usage and global under scope"):
+# learnings/issues/pull_requests take {scope: local|global|auto};
+# jira/linear/mcp take {usage: auto|enabled|disabled};
+# linked_repositories is an array of {repository, description} objects
+# under knowledge_base.
 knowledge_base:
-  mcp: enabled
-  learnings: global
-  issues: global
-  pull_requests: global
-  jira: enabled
-  linear: enabled
+  mcp:
+    usage: enabled
+  learnings:
+    scope: global
+  issues:
+    scope: global
+  pull_requests:
+    scope: global
+  jira:
+    usage: enabled
+  linear:
+    usage: enabled
   automatic_linking_mode: enabled
-linked_repositories:
-  - repository: caraxestigo/coderabbit-cr03-private
+  linked_repositories:
+    - repository: caraxestigo/coderabbit-cr03-private
+      description: "Private demo repo holding internal runbook notes."
