@@ -1,0 +1,29 @@
+# CR-03 demo — head-branch config (CORRECTED 2026-11-08, round 2)
+# Round 1 used string values; CodeRabbit's validator rejected all six with
+# "expected object, received string" and fell back to defaults, so round 1
+# tested nothing. Per docs.coderabbit.ai/reference/configuration (2026-11-02)
+# and the PR #4 review hint ("Put enabled under usage and global under scope"):
+# learnings/issues/pull_requests take {scope: local|global|auto};
+# jira/linear/mcp take {usage: auto|enabled|disabled};
+# linked_repositories is an array of {repository, instructions} objects
+# under knowledge_base. (Round 2 used "description" — the validator rejects
+# it: Unrecognized key "description" at linked_repositories[0]. The docs
+# page text says "description", but the live schema wants "instructions".)
+knowledge_base:
+  mcp:
+    usage: enabled
+  learnings:
+    scope: global
+  issues:
+    scope: global
+  pull_requests:
+    scope: global
+  jira:
+    usage: enabled
+  linear:
+    usage: enabled
+  automatic_linking_mode: enabled
+  linked_repositories:
+    - repository: caraxestigo/coderabbit-cr03-private
+      instructions: "Private demo repo holding internal runbook notes."
+# Round 4: dashboard manual link for coderabbit-cr03-private added 2026-11-08; re-review trigger.
