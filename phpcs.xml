@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- CR-02 demo payload: repo-root ruleset. installed_paths="." makes
+     PHPCS pick up the MyStandard/ directory shipped in the PR. -->
+<ruleset name="Demo">
+  <config name="installed_paths" value="."/>
+  <rule ref="MyStandard"/>
+  <file>test.php</file>
+</ruleset>
