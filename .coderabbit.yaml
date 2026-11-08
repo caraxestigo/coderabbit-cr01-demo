@@ -5,8 +5,10 @@
 # and the PR #4 review hint ("Put enabled under usage and global under scope"):
 # learnings/issues/pull_requests take {scope: local|global|auto};
 # jira/linear/mcp take {usage: auto|enabled|disabled};
-# linked_repositories is an array of {repository, description} objects
-# under knowledge_base.
+# linked_repositories is an array of {repository, instructions} objects
+# under knowledge_base. (Round 2 used "description" — the validator rejects
+# it: Unrecognized key "description" at linked_repositories[0]. The docs
+# page text says "description", but the live schema wants "instructions".)
 knowledge_base:
   mcp:
     usage: enabled
@@ -23,4 +25,4 @@ knowledge_base:
   automatic_linking_mode: enabled
   linked_repositories:
     - repository: caraxestigo/coderabbit-cr03-private
-      description: "Private demo repo holding internal runbook notes."
+      instructions: "Private demo repo holding internal runbook notes."
