@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>CR-07 API probe (local only)</title>
+<style>body{font-family:monospace;max-width:900px;margin:20px}input{width:420px}button{margin:8px 0;padding:6px 14px}pre{background:#111;color:#0f0;padding:12px;white-space:pre-wrap;word-break:break-all}</style>
+</head>
+<body>
+<h2>CR-07 — CodeRabbit API cross-org probe</h2>
+<p>Key stays in this browser tab only. Paste the workspace-A Agentic API key below (Ctrl+V), then Run. Read-only GETs only.</p>
+<label>API key: <input id="key" type="password" autocomplete="off" placeholder="paste key here"></label><br>
+<button id="run">Run all probes</button>
+<pre id="out">Idle. Paste the key, then press Run.</pre>
+<script>
+const ORG_B = "354121691"; // cr07-test-org (GitHub org id)
+const ORG_A = "209675330"; // caraxestigo personal (GitHub user id)
+const BASE = "https://api.coderabbit.ai/v1";
+const out = document.getElementById("out");
+function log(s){ out.textContent += "\n" + s; }
+async function probe(label, path){
+  const key = document.getElementById("key").value.trim();
+  try{
+    const r = await fetch(BASE + path, {headers: {"x-coderabbitai-api-key": key}});
+    const t = await r.text();
+    log("[" + r.status + "] " + label + " " + path + " :: " + t.slice(0, 400));
+    return {status: r.status, text: t};
+  }catch(e){
+    log("[ERROR] " + label + " " + path + " :: " + e.message);
+    return {status: 0, text: ""};
+  }
+}
+document.getElementById("run").onclick = async () => {
+  out.textContent = "Running probes (read-only GETs)...";
+  const orgs = await probe("orgs-no-id", "/organizations");
+  await probe("orgs-B", "/organizations?org_id=" + ORG_B);
+  await probe("orgs-A-control", "/organizations?org_id=" + ORG_A);
+  await probe("users-no-id", "/users");
+  await probe("users-B", "/users?org_id=" + ORG_B);
+  await probe("users-A-control", "/users?org_id=" + ORG_A);
+  await probe("roles-no-id", "/roles");
+  await probe("roles-B", "/roles?org_id=" + ORG_B);
+  await probe("roles-A-control", "/roles?org_id=" + ORG_A);
+  await probe("audit-B", "/audit-logs?org_id=" + ORG_B);
+  await probe("audit-A-control", "/audit-logs?org_id=" + ORG_A);
+  await probe("learnings-B", "/learnings?org_id=" + ORG_B);
+  await probe("learnings-A-control", "/learnings?org_id=" + ORG_A);
+  // repositories endpoint: try GitHub ids first
+  await probe("repos-B-ghid", "/organizations/" + ORG_B + "/repositories");
+  await probe("repos-A-ghid-control", "/organizations/" + ORG_A + "/repositories");
+  // then try any UUIDs returned by /organizations
+  try{
+    const j = JSON.parse(orgs.text);
+    const list = j.data || j.organizations || j || [];
+    const arr = Array.isArray(list) ? list : [list];
+    for (const o of arr){
+      const id = o.id || o.organization_id || o.uuid;
+      if (id && String(id) !== ORG_B && String(id) !== ORG_A){
+        await probe("repos-uuid-" + String(id).slice(0,8), "/organizations/" + id + "/repositories");
+      }
+    }
+  }catch(e){ log("orgs JSON parse skipped: " + e.message); }
+  log("DONE.");
+};
+</script>
+</body>
+</html>
